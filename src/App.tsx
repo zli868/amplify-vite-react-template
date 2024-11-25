@@ -1,108 +1,143 @@
 import { useEffect, useState } from "react";
-import type { Schema } from "../amplify/data/resource";
 import { useAuthenticator } from '@aws-amplify/ui-react';
-import { generateClient } from "aws-amplify/data";
-import React from "react";
-import { FaceLivenessDetector } from "@aws-amplify/ui-react-liveness";
-import { Loader, ThemeProvider } from "@aws-amplify/ui-react";
-
-const client = generateClient<Schema>();
 
 function App() {
-  const { signOut } = useAuthenticator();
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [createLivenessApiData, setCreateLivenessApiData] = useState<{
-    sessionId: string;
-  } | null>(null);
-  const [isLivenessVerified, setIsLivenessVerified] = useState<boolean | null>(null);
+  const { user } = useAuthenticator((context) => [context.user]);
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [responseMessage, setResponseMessage] = useState("");
 
-  // Fetch todos
-  useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }, []);
-
-  // Fetch liveness session ID
-  useEffect(() => {
-    const fetchCreateLiveness: () => Promise<void> = async () => {
-      // Replace this with a real call to your backend API
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      const mockResponse = { sessionId: "mockSessionId" };
-      setCreateLivenessApiData(mockResponse);
-      setLoading(false);
-    };
-
-    fetchCreateLiveness();
-  }, []);
-
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
-  }
-
-  function deleteTodo(id: string) {
-    client.models.Todo.delete({ id });
-  }
-
-  const handleAnalysisComplete: () => Promise<void> = async () => {
-    // Replace this with your backend API call
-    const response = await fetch(
-      `/api/get?sessionId=${createLivenessApiData?.sessionId}`
-    );
-    const data = await response.json();
-
-    if (data.isLive) {
-      setIsLivenessVerified(true);
-      console.log("User is live");
-    } else {
-      setIsLivenessVerified(false);
-      console.log("User is not live");
+  // Handles the file input change
+  const handleImageChange = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      setUploadedImage(event.target.files[0]);
     }
   };
 
-  return (
-    <ThemeProvider>
-      <main>
-        <h1>My todos</h1>
-        <button onClick={createTodo}>+ new</button>
-        <ul>
-          {todos.map((todo) => (
-            <li onClick={() => deleteTodo(todo.id)} key={todo.id}>
-              {todo.content}
-            </li>
-          ))}
-        </ul>
-        <div>
-          🥳 App successfully hosted. Try creating a new todo.
-          <br />
-          <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-            Review next step of this tutorial.
-          </a>
-        </div>
-        <button onClick={signOut}>Sign out</button>
+  // // Handles the upload to Lambda
+  // const handleUpload = async () => {
+  //   if (!uploadedImage || !user) {
+  //     alert("Please select an image and make sure you're logged in.");
+  //     return;
+  //   }
 
-        <section style={{ marginTop: "20px" }}>
-          <h2>Face Liveness Verification</h2>
-          {loading ? (
-            <Loader />
-          ) : (
-            <FaceLivenessDetector
-              sessionId={createLivenessApiData?.sessionId}
-              region="us-east-1"
-              onAnalysisComplete={handleAnalysisComplete}
-              onError={(error) => console.error(error)}
-            />
-          )}
-          {isLivenessVerified === true && (
-            <p style={{ color: "green" }}>User is live and verified! ✅</p>
-          )}
-          {isLivenessVerified === false && (
-            <p style={{ color: "red" }}>User verification failed. ❌</p>
-          )}
-        </section>
-      </main>
-    </ThemeProvider>
+  //   setLoading(true);
+  //   setResponseMessage("");
+
+  //   try {
+  //     const userEmail = user.signInDetails?.loginId || '';
+  //     // Modify the email
+  //     const modifiedEmail = userEmail.replace('@', ':');
+  //     // Read the file as binary data
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(uploadedImage);
+  //     reader.onload = async () => {
+  //       const base64Image = reader.result;
+
+  //       // Make the API call to Lambda
+  //       const response = await fetch(
+  //         'https://v8c6qwk16b.execute-api.us-east-1.amazonaws.com/default/FaceDataCapture',
+  //         {
+  //           method: 'POST',
+  //           headers: {
+  //             'x-user-email': modifiedEmail, // Pass the email in a custom header
+  //           },
+  //           body: JSON.stringify({
+  //             email: modifiedEmail,
+  //             image: base64Image
+  //           }),
+  //         }
+  //       );
+
+  //       const responseData = await response.json();
+
+  //       if (response.ok) {
+  //         setResponseMessage("Registration Successful: " + JSON.stringify(responseData));
+  //       } else {
+  //         setResponseMessage("Registration Error: " + JSON.stringify(responseData));
+  //       }
+  //     };
+
+  //     reader.onerror = (error) => {
+  //       console.error("File reading error", error);
+  //       setResponseMessage("File reading error");
+  //     };
+  //   } catch (error) {
+  //     console.error("Upload error", error);
+  //     setResponseMessage("Upload error: " + error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
+  const handleUpload = async () => {
+    if (!uploadedImage || !user) {
+      alert("Please select an image and make sure you're logged in.");
+      return;
+    }
+  
+    setLoading(true);
+    setResponseMessage("");
+  
+    try {
+      const userEmail = user.signInDetails?.loginId || '';
+      // Modify the email
+      const modifiedEmail = userEmail.replace('@', ':');
+      const reader = new FileReader();
+      reader.readAsDataURL(uploadedImage);
+      reader.onload = async () => {
+        const base64Image = reader.result?.toString().split(",")[1]; // Remove the prefix (e.g., `data:image/jpeg;base64,`)
+      console.log("Base64 Encoded Image:", base64Image);
+        // Make the API call to Lambda
+        const response = await fetch(
+          "https://v8c6qwk16b.execute-api.us-east-1.amazonaws.com/default/FaceDataCapture",
+          {
+            method: "POST",
+                    headers: {
+                      'x-user-email': modifiedEmail, // Pass the email in a custom header
+                    },
+            body: JSON.stringify({
+              email: modifiedEmail,
+              image: base64Image,
+            }),
+          }
+        );
+
+        const responseData = await response.json();
+  
+        if (response.ok) {
+          setResponseMessage(
+            "Registration Successful: " + JSON.stringify(responseData)
+          );
+        } else {
+          setResponseMessage("Error: " + JSON.stringify(responseData));
+        }
+      };
+  
+      reader.onerror = (error) => {
+        console.error("File reading error", error);
+        setResponseMessage("File reading error");
+      };
+    } catch (error) {
+      console.error("Upload error", error);
+      setResponseMessage("Upload error: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+ /* user.signInDetails?.loginId */
+  return (
+    <div className="App">
+      <h2>Register Your Face</h2>
+      <p>Email: {user.signInDetails?.loginId}</p> 
+      <input type="file" accept="image/*" onChange={handleImageChange} />
+      <button onClick={handleUpload} disabled={loading}>
+        {loading ? "Uploading..." : "Upload Image"}
+      </button>
+      {responseMessage && <p>{responseMessage}</p>}
+    </div>
   );
 }
 

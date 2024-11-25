@@ -1,0 +1,61 @@
+// two types: implicit, explict
+let firstName: string = "dr"; //type string
+firstName = 33; // error
+
+const json = JSON.parse("55");
+console.log(typeof json);
+
+// use any
+let v: any = true;
+v = "string"
+console.log(Math.round(v));
+
+//array
+const names: string[] = [];
+names.push("Dr");
+
+//read-only
+const names: readonly string [] = ["Dr"];
+names.push("Jack");
+
+const numbers = [1, 2, 3]; // inferred to type number[]
+numbers.push(4); // no error
+// comment line below out to see the successful assignment
+numbers.push("2"); // Error: Argument of type 'string' is not assignable to parameter of type 'number'.
+let head: number = numbers[0]; // no error
+
+//tuple
+let ourTuple: [number,boolean,string]
+//initialize
+ourTuple = [5, false, 'code']
+
+//func
+function getTime(): number {
+	return new Date().getTime();
+}
+function printHello(): void {
+	console.log('Hello!');
+}
+function multiply(a: number, b: number){
+	return a*b;
+}
+//js arrow func
+let myFunction = (a, b) => a * b;
+
+// the `?` operator here marks parameter `c` as optional(optional parameters)
+function add(a:number, b:number, c?:number) {
+	return a+b+(c||0);
+}
+//default parameter
+function pow(value: number, exponent: number = 10 ) {
+	return value ** exponent;
+}
+
+let myFunction = (a,b) => a*b;
+hello = function() {
+	return "Hello World!";
+}
+hello = () => {
+	return "Hello World!";
+
+}

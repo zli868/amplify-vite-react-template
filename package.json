@@ -10,11 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@aws-amplify/storage": "^6.7.0",
     "@aws-amplify/ui-react": "^6.5.5",
     "@aws-amplify/ui-react-liveness": "^3.1.16",
     "aws-amplify": "^6.8.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-native-image-picker": "^7.1.2"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.8.0",
