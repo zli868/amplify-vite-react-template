@@ -27,3 +27,14 @@ dist-ssr
 .amplify
 amplify_outputs*
 amplifyconfiguration*
+
+
+# Ignore everything in the src folder
+src/*
+
+# Unignore the files and folders you want to keep
+!src/App.tsx
+!src/App.css
+!src/index.css
+!src/main.tsx
+!src/assets/
