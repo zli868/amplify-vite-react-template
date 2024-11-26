@@ -1,34 +1,17 @@
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 
 function App() {
   const { user } = useAuthenticator((context) => [context.user]);
-  const [uploadedImage, setUploadedImage] = useState(null);
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null); // Explicit type
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
 
   // Handles the file input change
-  const handleImageChange = (event) => {
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setUploadedImage(event.target.files[0]);
     }
-  };
-  // convert to base64
-  function convertFileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-  
-      reader.onload = () => {
-        const base64String = reader.result as string;
-        resolve(base64String.split(',')[1]); // Remove data URL prefix
-      };
-  
-      reader.onerror = (error) => {
-        reject(error);
-      };
-  
-      reader.readAsDataURL(file);
-    });
   };
 
 
@@ -72,8 +55,13 @@ function App() {
 
 
     } catch (error) {
-      console.error("Upload error", error);
-      setResponseMessage("Upload error: " + error.message);
+      if (error instanceof Error) {
+        console.error("Upload error", error);
+        setResponseMessage("Upload error: " + error.message);
+      } else {
+        console.error("Unexpected error", error);
+        setResponseMessage("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }
