@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useAuthenticator } from '@aws-amplify/ui-react';
+import "./styles.css";
 
 function App() {
   const { user } = useAuthenticator((context) => [context.user]);
@@ -9,6 +10,7 @@ function App() {
   const [responseMessage, setResponseMessage] = useState("");
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const { signOut } = useAuthenticator();
 
   // Handles the file input change
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,7 +118,11 @@ function App() {
       </button>
       {responseMessage && <p>{responseMessage}</p>}
       <canvas ref={canvasRef} width="640" height="480" style={{ display: 'none' }}></canvas>
+
+      <button className="sign-out" onClick={signOut}>Sign out</button>
+
     </div>
+    
   );
 }
 

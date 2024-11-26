@@ -1,0 +1,106 @@
+/* Styling for the face registration web app */
+body {
+  background: linear-gradient(to bottom, #a29bfe, #dfe6e9);
+  font-family: Arial, sans-serif;
+  color: #2d3436;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.App {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+h2 {
+  color: #6c5ce7;
+}
+
+button {
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #341f97;
+}
+
+input[type="file"] {
+  margin: 1rem 0;
+  padding: 10px;
+  font-size: 14px;
+}
+
+video {
+  border: 3px solid #6c5ce7;
+  border-radius: 10px;
+  margin: 1rem 0;
+}
+
+img {
+  border: 3px solid #0984e3;
+  border-radius: 10px;
+  width: 320px;
+  margin: 1rem;
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.loading {
+  font-style: italic;
+  color: #00b894;
+}
+
+.error {
+  color: #d63031;
+}
+
+.success {
+  color: #00b894;
+}
+
+canvas {
+  display: none;
+}
+
+button.sign-out {
+  background-color: #d63031;
+}
+
+button.sign-out:hover {
+  background-color: #c0392b;
+}
+
+/* Added loading, error, and success class styling to enhance response messages */
+.response-message {
+  font-size: 18px;
+  margin-top: 1rem;
+}
+
+.response-message.loading {
+  color: #00b894;
+  font-style: italic;
+}
+
+.response-message.error {
+  color: #d63031;
+}
+
+.response-message.success {
+  color: #00b894;
+}
