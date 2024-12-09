@@ -35,6 +35,7 @@ src/*
 # Unignore the files and folders you want to keep
 !src/App.tsx
 !src/App.css
+!src/styles.css
 !src/index.css
 !src/main.tsx
 !src/assets/
